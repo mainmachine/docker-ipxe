@@ -3,30 +3,39 @@ FROM alpine:3.17.1
 LABEL maintainer "ferrari.marco@gmail.com"
 
 # Install the necessary packages
-RUN apk add --no-cache \
-  dnsmasq \
-  wget
+RUN apk update \
+    && apk add --no-cache \
+       dnsmasq \
+       wget
 
 ENV MEMTEST_VERSION 5.31b
-ENV SYSLINUX_VERSION 6.03
-ENV TEMP_SYSLINUX_PATH /tmp/syslinux-"$SYSLINUX_VERSION"
+# ENV SYSLINUX_VERSION 6.03
+# ENV TEMP_SYSLINUX_PATH /tmp/syslinux-"$SYSLINUX_VERSION"
 
 WORKDIR /tmp
-RUN \
-  mkdir -p "$TEMP_SYSLINUX_PATH" \
-  && wget -q https://www.kernel.org/pub/linux/utils/boot/syslinux/syslinux-"$SYSLINUX_VERSION".tar.gz \
-  && tar -xzf syslinux-"$SYSLINUX_VERSION".tar.gz \
-  && mkdir -p /var/lib/tftpboot \
-  && cp "$TEMP_SYSLINUX_PATH"/bios/core/pxelinux.0 /var/lib/tftpboot/ \
-  && cp "$TEMP_SYSLINUX_PATH"/bios/com32/libutil/libutil.c32 /var/lib/tftpboot/ \
-  && cp "$TEMP_SYSLINUX_PATH"/bios/com32/elflink/ldlinux/ldlinux.c32 /var/lib/tftpboot/ \
-  && cp "$TEMP_SYSLINUX_PATH"/bios/com32/menu/menu.c32 /var/lib/tftpboot/ \
-  && rm -rf "$TEMP_SYSLINUX_PATH" \
-  && rm /tmp/syslinux-"$SYSLINUX_VERSION".tar.gz \
-  && wget -q http://www.memtest.org/download/archives/"$MEMTEST_VERSION"/memtest86+-"$MEMTEST_VERSION".bin.gz \
-  && gzip -d memtest86+-"$MEMTEST_VERSION".bin.gz \
-  && mkdir -p /var/lib/tftpboot/memtest \
-  && mv memtest86+-$MEMTEST_VERSION.bin /var/lib/tftpboot/memtest/memtest86+
+
+RUN mkdir -p /var/lib/tftpboot/memtest /var/lib/tftpboot/bios /var/lib/tftpboot/uefi \
+    && ln -s ../pxelinux.cfg /var/lib/tftpboot/bios/ \
+    && ln -s ../pxelinux.cfg /var/lib/tftpboot/uefi/
+
+RUN wget -q http://www.memtest.org/download/archives/"$MEMTEST_VERSION"/memtest86+-"$MEMTEST_VERSION".bin.gz \
+    && gunzip memtest86+-"$MEMTEST_VERSION".bin.gz \
+    && mv memtest86+-$MEMTEST_VERSION.bin /var/lib/tftpboot/memtest/memtest86+
+
+RUN apk update \
+    && apk add --no-cache \
+       syslinux
+
+# Copy legacy BIOS syslinux files
+RUN for target in pxelinux.0 lpxelinux.0 libcom32.c32 libutil.c32 ldlinux.c32 menu.c32 vesamenu.c32; do \
+      find /usr/share/syslinux/ -name "${target}" -exec cp {} /var/lib/tftpboot/bios \;; \
+    done
+
+# Copy EFI syslinux files
+RUN for target in syslinux.efi ldlinux.e64 libcom32.c32 libutil.c32 vesamenu.c32; do \
+      find /usr/share/syslinux/efi -name "${target}" -exec cp {} /var/lib/tftpboot/uefi \;; \
+    done \
+    && find /usr/share/syslinux -name pxechn.c32 -exec cp {} /var/lib/tftpboot/uefi \;
 
 # Configure PXE and TFTP
 COPY tftpboot/ /var/lib/tftpboot
