@@ -3,7 +3,7 @@
 version: '2'
 services:
   dnsmasq-dhcp-pxe:
-    container_name: ${CONTAINERNAME:-dnsmasq-dhcp-pxe}
+    container_name: ${CONTAINERNAME}
     hostname: ${CONTAINER_HOSTNAME}
     restart: unless-stopped
     image: ${NAMESPACE}/${IMAGENAME}
