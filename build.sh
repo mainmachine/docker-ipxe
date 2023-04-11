@@ -2,9 +2,9 @@
 
 . .env
 
-NAMESPACE=${NAMESPACE:-mynamespace}
-IMAGENAME=${IMAGENAME:-myimagename}
-datecode="v$(date +%y.%m.%d_%H.%M)"
+export NAMESPACE=${NAMESPACE:-mynamespace}
+export IMAGENAME=${IMAGENAME:-myimagename}
+export datecode="v$(date +%y.%m.%d_%H.%M)"
 
 buildImage() {
   namespace="$1"
@@ -31,4 +31,4 @@ buildImage() {
   fi
 }
 
-buildImage ${datecode}
+buildImage ${NAMESPACE} ${IMAGENAME} ${datecode}
