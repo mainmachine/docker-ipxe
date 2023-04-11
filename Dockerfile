@@ -30,7 +30,7 @@ RUN apk update \
        done; \
     && for target in syslinux.efi ldlinux.e64 libcom32.c32 libutil.c32 vesamenu.c32; do \
          find /usr/share/syslinux/efi -name "${target}" -exec cp {} /var/lib/tftpboot/uefi \;; \
-       done \
+       done; \
     && find /usr/share/syslinux -name pxechn.c32 -exec cp {} /var/lib/tftpboot/uefi \;
 
 # Configure PXE and TFTP
