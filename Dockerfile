@@ -24,17 +24,13 @@ RUN wget -q http://www.memtest.org/download/archives/"$MEMTEST_VERSION"/memtest8
 
 RUN apk update \
     && apk add --no-cache \
-       syslinux
-
-# Copy legacy BIOS syslinux files
-RUN for target in pxelinux.0 lpxelinux.0 libcom32.c32 libutil.c32 ldlinux.c32 menu.c32 vesamenu.c32; do \
-      find /usr/share/syslinux/ -name "${target}" -exec cp {} /var/lib/tftpboot/bios \;; \
-    done
-
-# Copy EFI syslinux files
-RUN for target in syslinux.efi ldlinux.e64 libcom32.c32 libutil.c32 vesamenu.c32; do \
-      find /usr/share/syslinux/efi -name "${target}" -exec cp {} /var/lib/tftpboot/uefi \;; \
-    done \
+       syslinux \
+    && for target in pxelinux.0 lpxelinux.0 libcom32.c32 libutil.c32 ldlinux.c32 menu.c32 vesamenu.c32; do \
+         find /usr/share/syslinux/ -name "${target}" -exec cp {} /var/lib/tftpboot/bios \;; \
+       done; \
+    && for target in syslinux.efi ldlinux.e64 libcom32.c32 libutil.c32 vesamenu.c32; do \
+         find /usr/share/syslinux/efi -name "${target}" -exec cp {} /var/lib/tftpboot/uefi \;; \
+       done \
     && find /usr/share/syslinux -name pxechn.c32 -exec cp {} /var/lib/tftpboot/uefi \;
 
 # Configure PXE and TFTP
