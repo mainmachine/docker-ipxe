@@ -1,0 +1,39 @@
+# dnsmasq DHCP/PxE server for F2 support
+
+version: '2'
+services:
+  dnsmasq-dhcp-pxe:
+    container_name: ${CONTAINERNAME:-dnsmasq-dhcp-pxe}
+    hostname: ${CONTAINER_HOSTNAME}
+    restart: unless-stopped
+    image: ${NAMESPACE}/${IMAGENAME}
+    cap_add:
+      - NET_ADMIN
+    # environment:
+    volumes:
+      - "pxelinux-cfg:/var/lib/tftpboot/pxelinux.cfg"
+      - "${DNSMASQ_CONF_DIR}:/etc/dnsmasq.conf.d"
+      - "${EXTRA_PATH}:/var/lib/tftpboot/${EXTRA_NAME}"
+    networks:
+      iso-br1:
+        ipv4_address: ${HUB_IP}
+    command: >
+      --dhcp-authoritative
+      --interface-name=${CONTAINER_DOMAIN},${CONTAINER_NET_INTERFACE}
+      --auth-server=${CONTAINER_HOSTNAME}.${CONTAINER_DOMAIN},${CONTAINER_NET_INTERFACE}
+      --auth-zone=${CONTAINER_DOMAIN},${CONTAINER_NET_INTERFACE}
+      --host-record=${SERVER1_HOSTNAME},${SERVER1_IP}
+      --conf-dir=/etc/dnsmasq.conf.d,*.conf
+
+networks:
+  iso-br1:
+    driver: macvlan
+    driver_opts:
+      parent: ${HOST_BRIDGE}
+    ipam:
+      config:
+        - subnet: ${SUBNET}
+          gateway: ${BRIDGE_IP}
+
+volumes:
+  pxelinux-cfg:
