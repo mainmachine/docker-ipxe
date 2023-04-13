@@ -3,3 +3,4 @@ etc/**/*.env
 
 tftpboot/pxelinux.cfg/example
 etc/dnsmasq.conf.d/example.conf
+etc/dnsmasq.conf.d/README.md
