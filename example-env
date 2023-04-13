@@ -1,0 +1,26 @@
+# Docker Image
+NAMESPACE=mynamespace
+IMAGENAME=myimagename
+
+# Container
+HOST_BRIDGE=br1
+CONTAINER_NET_INTERFACE=eth0
+CONTAINER_HOSTNAME=dnsmasq-dhcp-pxe
+CONTAINER_DOMAIN=mydomain.lan
+CONTAINERNAME=dnsmasq-network-hub
+
+# Network
+SUBNET=10.1.0.0/16
+MASK=255.255.0.0
+HUB_IP=10.1.0.2
+BRIDGE_IP=10.1.0.1
+DHCP_RANGE_START=10.1.0.3
+DHCP_RANGE_END=10.1.255.255
+
+# Example: ISO files to allow network boot into a live Linux distro
+EXTRA_PATH=/path/to/other/files
+EXTRA_NAME=extra-one
+
+# Example: The docker host for this container
+SERVER1_HOSTNAME=myhost.mydomain.lan
+SERVER1_IP=10.1.0.1
