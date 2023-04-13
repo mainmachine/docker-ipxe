@@ -7,13 +7,14 @@ docker-compose up -d
 # Update menu files in running container - required because we use volumes
 #   to allow manual modifications to menu files in running container
 for menufile in tftpboot/pxelinux.cfg/*; do
-  case $(basename $menufile) in
+  menufile=$(basename $menufile)
+  case $menufile in
     default|additional_menu_entries*|*example*)
       true # Do nothing
       ;;
     *)
       menufilerename=${menufile%*.env}
-      docker cp ${menufile} ${CONTAINERNAME}:/var/lib/${menufilerename}
+      docker cp ${menufile} ${CONTAINERNAME}:/var/lib/tftpboot/pxelinux.cfg/${menufilerename}
       docker exec ${CONTAINERNAME} sh -c "echo \"INCLUDE pxelinux.cfg/${menufilerename}\" >> /var/lib/tftpboot/pxelinux.cfg/additional_menu_entries"
       ;;
   esac
