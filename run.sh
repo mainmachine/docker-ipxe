@@ -14,7 +14,7 @@ for menufile in tftpboot/pxelinux.cfg/*; do
       ;;
     *)
       menufilerename=${menufile%*.env}
-      docker cp ${menufile} ${CONTAINERNAME}:/var/lib/tftpboot/pxelinux.cfg/${menufilerename}
+      docker cp tftpboot/pxelinux.cfg/${menufile} ${CONTAINERNAME}:/var/lib/tftpboot/pxelinux.cfg/${menufilerename}
       docker exec ${CONTAINERNAME} sh -c "echo \"INCLUDE pxelinux.cfg/${menufilerename}\" >> /var/lib/tftpboot/pxelinux.cfg/additional_menu_entries"
       ;;
   esac
