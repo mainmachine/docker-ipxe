@@ -31,10 +31,22 @@ buildImage() {
   fi
 }
 
-# Add an INCLUDE entry for each menu file unless they are "gitignored"
-shopt -s extglob nullglob
-for menufile in tftpboot/pxelinux.cfg/*!(.env); do
-  printf "\n%s\n" "INCLUDE pxelinux.cfg/${menufile}" >> tftpboot/pxelinux.cfg/additional_menu_entries
+# Back up additional_menu_entries file
+cp tftpboot/pxelinux.cfg/additional_menu_entries{,.bak}
+
+for menufile in tftpboot/pxelinux.cfg/*; do
+  case $(basename $menufile) in
+    default|additional_menu_entries|*example*|*.env)
+      true # Do nothing
+      ;;
+    *)
+      # Add an INCLUDE entry
+      printf "\n%s\n" "INCLUDE pxelinux.cfg/${menufile}" >> tftpboot/pxelinux.cfg/additional_menu_entries
+      ;;
+  esac
 done
 
 buildImage ${NAMESPACE} ${IMAGENAME} ${datecode}
+
+# Restore additional_menu_entries file
+cp tftpboot/pxelinux.cfg/additional_menu_entries{.bak,}
