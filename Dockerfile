@@ -16,7 +16,9 @@ WORKDIR /tmp
 
 RUN mkdir -p /var/lib/tftpboot/memtest /var/lib/tftpboot/bios /var/lib/tftpboot/uefi \
     && ln -s ../pxelinux.cfg /var/lib/tftpboot/bios/ \
-    && ln -s ../pxelinux.cfg /var/lib/tftpboot/uefi/
+    && ln -s ../pxelinux.cfg /var/lib/tftpboot/uefi/ \
+    && ln -s ../memtest /var/lib/tftpboot/uefi/ \
+    && ln -s ../memtest /var/lib/tftpboot/bios/
 
 RUN wget -q http://www.memtest.org/download/archives/"$MEMTEST_VERSION"/memtest86+-"$MEMTEST_VERSION".bin.gz \
     && gunzip memtest86+-"$MEMTEST_VERSION".bin.gz \
