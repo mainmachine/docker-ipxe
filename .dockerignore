@@ -1,0 +1,2 @@
+tftpboot/**/*.env
+etc/**/*.env
