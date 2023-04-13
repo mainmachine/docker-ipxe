@@ -2,7 +2,7 @@
 
 . .env
 
-docker-compose -d up
+docker-compose up -d
 
 # Update menu files in running container - required because we use volumes
 #   to allow manual modifications to menu files in running container
