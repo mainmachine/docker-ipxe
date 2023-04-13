@@ -1,2 +1,5 @@
 tftpboot/**/*.env
 etc/**/*.env
+
+tftpboot/pxelinux.cfg/example
+etc/dnsmasq.conf.d/example.conf
