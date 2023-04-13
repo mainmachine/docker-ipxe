@@ -31,9 +31,9 @@ buildImage() {
   fi
 }
 
-# Add an INCLUDE entry for each "gitignored" menu file
-for menufile in tftpboot/pxelinux.cfg/*.env; do
-  # cat $i >>  tftpboot/pxelinux.cfg/additional_menu_entries
+# Add an INCLUDE entry for each menu file unless they are "gitignored"
+shopt -s extglob nullglob
+for menufile in tftpboot/pxelinux.cfg/*!(.env); do
   printf "\n%s\n" "INCLUDE pxelinux.cfg/${menufile}" >> tftpboot/pxelinux.cfg/additional_menu_entries
 done
 
