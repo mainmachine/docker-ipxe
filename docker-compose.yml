@@ -12,7 +12,7 @@ services:
     # environment:
     volumes:
       - "pxelinux-cfg:/var/lib/tftpboot/pxelinux.cfg"
-      - "${DNSMASQ_CONF_DIR}:/etc/dnsmasq.conf.d"
+      - "dnsmasq-conf:/etc/dnsmasq.conf.d"
       - "${EXTRA_PATH}:/var/lib/tftpboot/${EXTRA_NAME}"
     networks:
       iso-br1:
@@ -37,3 +37,4 @@ networks:
 
 volumes:
   pxelinux-cfg:
+  dnsmasq-conf:
