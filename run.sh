@@ -8,7 +8,7 @@ docker-compose up -d
 #   to allow manual modifications to menu files in running container
 for menufile in tftpboot/pxelinux.cfg/*; do
   case $(basename $menufile) in
-    default|additional_menu_entries|*example*)
+    default|additional_menu_entries*|*example*)
       true # Do nothing
       ;;
     *)
@@ -33,6 +33,8 @@ for conffile in etc/dnsmasq.conf.d/*; do
       ;;
   esac
 done
+
+docker exec ${CONTAINERNAME} sh -c 'chown -R $(id -un):$(id -gn) /etc/dnsmasq.conf.d /var/lib/tftpboot'
 
 # Restart to use refreshed configs
 docker-compose restart
