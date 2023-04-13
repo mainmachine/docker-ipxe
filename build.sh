@@ -36,7 +36,7 @@ cp tftpboot/pxelinux.cfg/additional_menu_entries{,.bak}
 
 for menufile in tftpboot/pxelinux.cfg/*; do
   case $(basename $menufile) in
-    default|additional_menu_entries|*example*|*.env)
+    default|additional_menu_entries*|*example*|*.env)
       true # Do nothing
       ;;
     *)
