@@ -1,3 +1,6 @@
+# Example .env file - this is read in by docker-compose
+# Copy to .env and then edit as you please
+
 # Docker Image
 NAMESPACE=mynamespace
 IMAGENAME=myimagename
