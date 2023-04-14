@@ -1,9 +1,12 @@
 DEFAULT memtest86
   SAY Now booting in the PXE Boot MENU...
 
+# Don't allow users to edit options
+ALLOWOPTIONS 0
+
 LABEL memtest86
   MENU LABEL Memtest86+
-  KERNEL /memtest/memtest86+
+  KERNEL memtest/memtest86+
 # eventually include additional entries
 INCLUDE pxelinux.cfg/additional_menu_entries
 
