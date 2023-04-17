@@ -17,7 +17,8 @@ RUN mkdir -p /var/lib/tftpboot/memtest
 RUN wget -q http://www.memtest.org/download/v${MEMTEST_VERSION}/mt86plus_${MEMTEST_VERSION}.binaries.zip \
     && unzip mt86plus_${MEMTEST_VERSION}.binaries.zip \
     && mv memtest64.bin /var/lib/tftpboot/memtest/ \
-    && mv memtest64.efi /var/lib/tftpboot/memtest/
+    && mv memtest64.efi /var/lib/tftpboot/memtest/ \
+    && rm mt86plus_* memtest*
 
 RUN apk update \
     && apk add --no-cache \
