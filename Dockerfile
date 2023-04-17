@@ -8,15 +8,16 @@ RUN apk update \
        dnsmasq \
        wget
 
-ENV MEMTEST_VERSION 5.31b
+ENV MEMTEST_VERSION 6.10
 
 WORKDIR /tmp
 
 RUN mkdir -p /var/lib/tftpboot/memtest
 
-RUN wget -q http://www.memtest.org/download/archives/"$MEMTEST_VERSION"/memtest86+-"$MEMTEST_VERSION".bin.gz \
-    && gunzip memtest86+-"$MEMTEST_VERSION".bin.gz \
-    && mv memtest86+-$MEMTEST_VERSION.bin /var/lib/tftpboot/memtest/memtest86+
+RUN wget -q http://www.memtest.org/download/v${MEMTEST_VERSION}}/mt86plus_${MEMTEST_VERSION}}.binaries.zip \
+    && unzip mt86plus_${MEMTEST_VERSION}}.binaries.zip \
+    && mv memtest64.bin /var/lib/tftpboot/memtest/ \
+    && mv memtest64.efi /var/lib/tftpboot/memtest/
 
 RUN apk update \
     && apk add --no-cache \
