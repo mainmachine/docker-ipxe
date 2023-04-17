@@ -1,6 +1,6 @@
 FROM alpine:3.17.3
 
-LABEL maintainer "ferrari.marco@gmail.com"
+LABEL maintainer "dave.martinka@mediavuesystems.com"
 
 # Install the necessary packages
 RUN apk update \
