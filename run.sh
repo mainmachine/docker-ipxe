@@ -22,16 +22,18 @@ done
 
 # ...also for ipxe and other files
 for tftpbootfile in tftpboot/*; do
-  tftpbootfile=$(basename $tftpbootfile)
-  case $tftpbootfile in
-    *example*)
-      true # Do nothing
-      ;;
-    *)
-      tftpbootfilerename=${tftpbootfile%*.env}
-      docker cp tftpboot/${tftpbootfile} ${CONTAINERNAME}:/var/lib/tftpboot/${tftpbootfilerename}
-      ;;
-  esac
+  if [ -f "$file" ]; then
+    tftpbootfile=$(basename $tftpbootfile)
+    case $tftpbootfile in
+      *example*)
+        true # Do nothing
+        ;;
+      *)
+        tftpbootfilerename=${tftpbootfile%*.env}
+        docker cp tftpboot/${tftpbootfile} ${CONTAINERNAME}:/var/lib/tftpboot/${tftpbootfilerename}
+        ;;
+    esac
+  fi
 done
 
 # ...and the same goes for dnsmasq configs
