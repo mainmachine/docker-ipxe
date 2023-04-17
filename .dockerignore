@@ -5,3 +5,5 @@ etc/dnsmasq.conf.d/example.conf
 etc/dnsmasq.conf.d/README.md
 tftpboot/pxelinux.cfg/additional_menu_entries.bak
 tftpboot/pxelinux.cfg/example
+
+tftpboot/menu.ipxe.example
