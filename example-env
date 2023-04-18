@@ -17,8 +17,9 @@ SUBNET=10.1.0.0/16
 MASK=255.255.0.0
 HUB_IP=10.1.0.2
 BRIDGE_IP=10.1.0.1
-DHCP_RANGE_START=10.1.0.3
+DHCP_RANGE_START=10.1.0.4
 DHCP_RANGE_END=10.1.255.255
+WEBSERVER_IP=10.1.0.3
 
 # Example: ISO files to allow network boot into a live Linux distro
 EXTRA_PATH=/path/to/other/files
