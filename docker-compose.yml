@@ -21,6 +21,16 @@ services:
       --dhcp-authoritative
       --conf-dir=/etc/dnsmasq.conf.d,*.conf
 
+  web-server:
+    restart: unless-stopped
+    image: httpd
+    volumes:
+      - "webroot:/usr/local/apache2/htdocs"
+    networks:
+      iso-br1:
+        ipv4_address: ${WEBSERVER_IP}
+
+
 networks:
   iso-br1:
     driver: macvlan
@@ -34,3 +44,4 @@ networks:
 volumes:
   pxelinux-cfg:
   dnsmasq-conf:
+  webroot:
