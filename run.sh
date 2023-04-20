@@ -51,6 +51,20 @@ for conffile in etc/dnsmasq.conf.d/*; do
   esac
 done
 
+# ...and ALSO apache files
+for htdocsfile in usr/local/apache2/htdocs/*; do
+  htdocsfile=$(basename $htdocsfile)
+  case $htdocsfile in
+    *example*|READEME*)
+      true # Do nothing
+      ;;
+    *)
+      htdocsfilerename=${htdocsfile%*.env}
+      docker cp usr/local/apache2/htdocs/${htdocsfile} ${CONTAINERNAME}:/usr/local/apache2/htdocs/${htdocsfilerename}
+      ;;
+  esac
+done
+
 docker exec ${CONTAINERNAME} sh -c 'chown -R $(id -un):$(id -gn) /etc/dnsmasq.conf.d /var/lib/tftpboot'
 
 # Restart to use refreshed configs
