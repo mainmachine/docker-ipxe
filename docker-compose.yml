@@ -26,6 +26,7 @@ services:
     image: httpd
     volumes:
       - "webroot:/usr/local/apache2/htdocs"
+      - "/srv/isos:/usr/local/apache2/htdocs/isos"
     networks:
       iso-br1:
         ipv4_address: ${WEBSERVER_IP}
