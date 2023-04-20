@@ -3,7 +3,7 @@
 version: '2'
 services:
   dnsmasq-dhcp-pxe:
-    container_name: ${CONTAINERNAME}
+    container_name: ${DNSMASQ_CONTAINER_NAME}
     hostname: ${CONTAINER_HOSTNAME}
     restart: unless-stopped
     image: ${NAMESPACE}/${IMAGENAME}
@@ -22,6 +22,7 @@ services:
       --conf-dir=/etc/dnsmasq.conf.d,*.conf
 
   web-server:
+    container_name: ${WEBSERVER_CONTAINER_NAME}
     restart: unless-stopped
     image: httpd
     volumes:

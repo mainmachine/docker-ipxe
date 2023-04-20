@@ -14,8 +14,8 @@ for menufile in tftpboot/pxelinux.cfg/*; do
       ;;
     *)
       menufilerename=${menufile%*.env}
-      docker cp tftpboot/pxelinux.cfg/${menufile} ${CONTAINERNAME}:/var/lib/tftpboot/pxelinux.cfg/${menufilerename}
-      docker exec ${CONTAINERNAME} sh -c "echo \"INCLUDE pxelinux.cfg/${menufilerename}\" >> /var/lib/tftpboot/pxelinux.cfg/additional_menu_entries"
+      docker cp tftpboot/pxelinux.cfg/${menufile} ${DNSMASQ_CONTAINER_NAME}:/var/lib/tftpboot/pxelinux.cfg/${menufilerename}
+      docker exec ${DNSMASQ_CONTAINER_NAME} sh -c "echo \"INCLUDE pxelinux.cfg/${menufilerename}\" >> /var/lib/tftpboot/pxelinux.cfg/additional_menu_entries"
       ;;
   esac
 done
@@ -30,7 +30,7 @@ for tftpbootfile in tftpboot/*; do
         ;;
       *)
         tftpbootfilerename=${tftpbootfile%*.env}
-        docker cp tftpboot/${tftpbootfile} ${CONTAINERNAME}:/var/lib/tftpboot/${tftpbootfilerename}
+        docker cp tftpboot/${tftpbootfile} ${DNSMASQ_CONTAINER_NAME}:/var/lib/tftpboot/${tftpbootfilerename}
         ;;
     esac
   fi
@@ -43,7 +43,7 @@ for conffile in etc/dnsmasq.conf.d/*; do
       true # Do nothing
       ;;
     *.conf.env|*.conf)
-      docker cp ${conffile} ${CONTAINERNAME}:/${conffile%*.env}
+      docker cp ${conffile} ${DNSMASQ_CONTAINER_NAME}:/${conffile%*.env}
       ;;
     *)
       true # Do nothing
@@ -60,12 +60,12 @@ for htdocsfile in usr/local/apache2/htdocs/*; do
       ;;
     *)
       htdocsfilerename=${htdocsfile%*.env}
-      docker cp usr/local/apache2/htdocs/${htdocsfile} ${CONTAINERNAME}:/usr/local/apache2/htdocs/${htdocsfilerename}
+      docker cp usr/local/apache2/htdocs/${htdocsfile} ${WEBSERVER_CONTAINER_NAME}:/usr/local/apache2/htdocs/${htdocsfilerename}
       ;;
   esac
 done
 
-docker exec ${CONTAINERNAME} sh -c 'chown -R $(id -un):$(id -gn) /etc/dnsmasq.conf.d /var/lib/tftpboot'
+docker exec ${DNSMASQ_CONTAINER_NAME} sh -c 'chown -R $(id -un):$(id -gn) /etc/dnsmasq.conf.d /var/lib/tftpboot'
 
 # Restart to use refreshed configs
 docker-compose restart
