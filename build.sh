@@ -41,8 +41,10 @@ buildIpxe() {
   (
     cd ipxe/src
     make -j${threads} ${ipxetarget} EMBED=${ipxeembedscript}
-    mkdir -p ../../usr/local/apache2/htdocs/${targetdir}
-    cp ${ipxetarget} ../../usr/local/apache2/htdocs/${targetdir}/
+    # mkdir -p ../../usr/local/apache2/htdocs/${targetdir}
+    # cp ${ipxetarget} ../../usr/local/apache2/htdocs/${targetdir}/
+    mkdir -p ../../tftpboot/${targetdir}
+    cp ${ipxetarget} ../../tftpboot/${targetdir}/
   )
 }
 
