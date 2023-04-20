@@ -4,6 +4,8 @@
 
 export NAMESPACE=${NAMESPACE:-mynamespace}
 export IMAGENAME=${IMAGENAME:-myimagename}
+export IPXE_TARGET=${IPXE_TARGET:-bin-x86_64-efi/ipxe.efi}
+export IPXE_EMBED_SCRIPT=${IPXE_EMBED_SCRIPT:-web-server.ipxe}
 export datecode="v$(date +%y.%m.%d_%H.%M)"
 
 buildImage() {
@@ -31,6 +33,19 @@ buildImage() {
   fi
 }
 
+buildIpxe() {
+  export ipxetarget="$1"
+  export ipxeembedscript="$2"
+  export threads="$(nproc --ignore=1)"
+  export targetdir="$(dirname $ipxetarget)"
+  (
+    cd ipxe/src
+    make -j${threads} ${ipxetarget} EMBED=${ipxeembedscript}
+    mkdir -p ../../usr/local/apache2/htdocs/${targetdir}
+    cp ${ipxetarget} ../../usr/local/apache2/htdocs/${targetdir}/
+  )
+}
+
 # Back up additional_menu_entries file
 cp tftpboot/pxelinux.cfg/additional_menu_entries{,.bak}
 
@@ -45,6 +60,8 @@ for menufile in tftpboot/pxelinux.cfg/*; do
       ;;
   esac
 done
+
+buildIpxe ${IPXE_TARGET} ${IPXE_EMBED_SCRIPT}
 
 buildImage ${NAMESPACE} ${IMAGENAME} ${datecode}
 
