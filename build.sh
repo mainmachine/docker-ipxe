@@ -40,6 +40,7 @@ buildIpxe() {
   export targetdir="$(dirname $ipxetarget)"
   (
     cd ipxe/src
+    make clean
     make -j${threads} ${ipxetarget} EMBED=${ipxeembedscript}
     # mkdir -p ../../usr/local/apache2/htdocs/${targetdir}
     # cp ${ipxetarget} ../../usr/local/apache2/htdocs/${targetdir}/
