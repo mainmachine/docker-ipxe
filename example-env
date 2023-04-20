@@ -10,7 +10,8 @@ HOST_BRIDGE=br1
 CONTAINER_NET_INTERFACE=eth0
 CONTAINER_HOSTNAME=dnsmasq-dhcp-pxe
 CONTAINER_DOMAIN=mydomain.lan
-CONTAINERNAME=dnsmasq-network-hub
+DNSMASQ_CONTAINER_NAME=dnsmasq-network-hub
+WEBSERVER_CONTAINER_NAME=pxe-http-server
 
 # Network
 SUBNET=10.1.0.0/16
@@ -28,3 +29,7 @@ EXTRA_NAME=extra-one
 # Example: The docker host for this container
 SERVER1_HOSTNAME=myhost.mydomain.lan
 SERVER1_IP=10.1.0.1
+
+# ipxe build vars
+IPXE_TARGET=bin-x86_64-efi/ipxe.efi
+IPXE_EMBED_SCRIPT=web-server.ipxe
