@@ -114,3 +114,16 @@ After cloning, you will need to initialize and populate this submodule with the 
 git submodule init
 git submodule update
 ```
+
+### Support for arm64 (WIP)
+
+Note: To cross-compile ipxe for arm64, do the following:
+
+```shell
+# Install cross-compiling tools
+sudo apt install gcc make gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu
+
+# Build ipxe efi executable (example)
+cd ipxe/src
+make -j$(nproc --ignore=1) CROSS=aarch64-linux-gnu- bin-arm64-efi/ipxe.efi
+```
