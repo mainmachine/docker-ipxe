@@ -20,13 +20,13 @@ RUN wget -q http://www.memtest.org/download/v${MEMTEST_VERSION}/mt86plus_${MEMTE
     && mv memtest64.efi /var/lib/tftpboot/memtest/ \
     && rm mt86plus_* memtest*
 
-RUN apk update \
-    && apk add --no-cache \
-       alpine-ipxe-undionly_kpxe \
-       alpine-ipxe-ipxe_efi
+# RUN apk update \
+#     && apk add --no-cache \
+#        alpine-ipxe-undionly_kpxe \
+#        alpine-ipxe-ipxe_efi
 
-RUN cp /usr/share/alpine-ipxe/undionly.kpxe /var/lib/tftpboot/ \
-    && cp /usr/share/alpine-ipxe/ipxe.efi /var/lib/tftpboot/
+# RUN cp /usr/share/alpine-ipxe/undionly.kpxe /var/lib/tftpboot/ \
+#     && cp /usr/share/alpine-ipxe/ipxe.efi /var/lib/tftpboot/
 
 # Configure PXE and TFTP
 COPY tftpboot/ /var/lib/tftpboot
