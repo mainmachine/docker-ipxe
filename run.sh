@@ -22,7 +22,7 @@ done
 
 # ...also for ipxe and other files
 for tftpbootfile in tftpboot/*; do
-  if [ -f "$file" ]; then
+  if [ -f "$tftpbootfile" ]; then
     tftpbootfile=$(basename $tftpbootfile)
     case $tftpbootfile in
       *example*)
