@@ -55,7 +55,7 @@ done
 for htdocsfile in usr/local/apache2/htdocs/*; do
   htdocsfile=$(basename $htdocsfile)
   case $htdocsfile in
-    *example*|READEME*)
+    *example*|README*)
       true # Do nothing
       ;;
     *)
