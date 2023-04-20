@@ -63,7 +63,7 @@ for menufile in tftpboot/pxelinux.cfg/*; do
   esac
 done
 
-buildIpxe ${IPXE_TARGET} ${IPXE_EMBED_SCRIPT}
+buildIpxe ${IPXE_TARGET} "$(readlink -f ${IPXE_EMBED_SCRIPT})"
 
 buildImage ${NAMESPACE} ${IMAGENAME} ${datecode}
 
