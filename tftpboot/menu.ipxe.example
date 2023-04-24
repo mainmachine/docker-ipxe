@@ -1,6 +1,7 @@
 #!ipxe
 
-dhcp
+# If we have an IP already, show it, or else get one via dhcp
+isset net0/ip && show net0/ip || dhcp
 
 # This script derived from https://gist.github.com/robinsmidsrod/2234639
 
