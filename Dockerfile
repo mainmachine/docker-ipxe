@@ -6,9 +6,12 @@ LABEL maintainer "dave.martinka@mediavuesystems.com"
 RUN apk update \
     && apk add --no-cache \
        dnsmasq \
-       wget
+       wget \
+       xorriso
 
 ENV MEMTEST_VERSION 6.10
+ENV UEFI_SHELL_MAJOR_VERSION 2.2
+ENV UEFI_SHELL_RELEASE_VERSION 22H2
 
 WORKDIR /tmp
 
@@ -19,6 +22,15 @@ RUN wget -q http://www.memtest.org/download/v${MEMTEST_VERSION}/mt86plus_${MEMTE
     && mv memtest64.bin /var/lib/tftpboot/memtest/ \
     && mv memtest64.efi /var/lib/tftpboot/memtest/ \
     && rm mt86plus_* memtest*
+
+RUN mkdir -p /var/lib/tftpboot/uefishell
+
+RUN wget -q https://github.com/pbatard/UEFI-Shell/releases/download/${UEFI_SHELL_RELEASE_VERSION}/UEFI-Shell-${UEFI_SHELL_MAJOR_VERSION}-${UEFI_SHELL_RELEASE_VERSION}-RELEASE.iso \
+    && xorriso -osirrox on -indev UEFI-Shell-${UEFI_SHELL_MAJOR_VERSION}-${UEFI_SHELL_RELEASE_VERSION}-RELEASE.iso -extract / uefishell \
+    && mv uefishell/efi/boot/bootx64.efi /var/lib/tftpboot/uefishell/ \
+    && mv uefishell/efi/boot/bootaa64.efi /var/lib/tftpboot/uefishell/ \
+    && mv uefishell/efi/boot/bootarm.efi /var/lib/tftpboot/uefishell/ \
+    && rm -r uefishell* *.iso
 
 # RUN apk update \
 #     && apk add --no-cache \
