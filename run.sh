@@ -66,12 +66,12 @@ for htdocsfile in usr/local/apache2/htdocs/*; do
 done
 
 # Sync memtest from dnsmaq container to httpd container
-otherpxedirs="memtest"
+otherpxedirs="memtest uefishell"
 for dir in $otherpxedirs; do
   if (docker exec ${DNSMASQ_CONTAINER_NAME} sh -c "[ -d /var/lib/tftpboot/${dir} ]"); then
     mkdir -p /tmp/staging/
-    docker cp ${DNSMASQ_CONTAINER_NAME}:/var/lib/tftpboot/${dir} /tmp/staging/${dir}
-    docker cp /tmp/staging/${dir} ${WEBSERVER_CONTAINER_NAME}:/usr/local/apache2/htdocs/${dir}
+    docker cp ${DNSMASQ_CONTAINER_NAME}:/var/lib/tftpboot/${dir} /tmp/staging/
+    docker cp /tmp/staging/${dir} ${WEBSERVER_CONTAINER_NAME}:/usr/local/apache2/htdocs/
   else
     echo "Couldn't find $dir in ${DNSMASQ_CONTAINER_NAME}:/var/lib/tftpboot/ !!!"
     exit 29
