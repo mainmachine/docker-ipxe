@@ -65,6 +65,19 @@ for htdocsfile in usr/local/apache2/htdocs/*; do
   esac
 done
 
+# Sync memtest from dnsmaq container to httpd container
+otherpxedirs="memtest"
+for dir in $otherpxedirs; do
+  if []; then
+    mkdir -p /tmp/staging/
+    docker cp ${DNSMASQ_CONTAINER_NAME}:/var/lib/tftpboot/${dir} /tmp/staging/${dir}
+    docker cp /tmp/staging/${dir} ${WEBSERVER_CONTAINER_NAME}:/usr/local/apache2/htdocs/${dir}
+  else
+    echo "Couldn't find $dir in ${DNSMASQ_CONTAINER_NAME}:/var/lib/tftpboot/ !!!"
+    exit 29
+  fi
+done
+
 docker exec ${DNSMASQ_CONTAINER_NAME} sh -c 'chown -R $(id -un):$(id -gn) /etc/dnsmasq.conf.d /var/lib/tftpboot'
 
 # Restart to use refreshed configs
