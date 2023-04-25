@@ -38,10 +38,23 @@ buildIpxe() {
   export ipxeembedscript="$2"
   export threads="$(nproc --ignore=1)"
   export targetdir="$(dirname $ipxetarget)"
+
+  makeopts=""
+
+  case $ipxetarget in
+    *-arm32-*|*-arm64-*)
+      export makeopts="CROSS=aarch64-linux-gnu-"
+      ;;
+    *)
+      # Assume x86 or x86_64 compatible
+      true # Do nothing
+      ;;
+  esac
+
   (
     cd ipxe/src
     make clean
-    make -j${threads} ${ipxetarget} EMBED=${ipxeembedscript}
+    make -j${threads} ${makeopts} ${ipxetarget} EMBED=${ipxeembedscript}
     # mkdir -p ../../usr/local/apache2/htdocs/${targetdir}
     # cp ${ipxetarget} ../../usr/local/apache2/htdocs/${targetdir}/
     mkdir -p ../../tftpboot/${targetdir}
