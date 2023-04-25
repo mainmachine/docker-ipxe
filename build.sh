@@ -77,7 +77,7 @@ for menufile in tftpboot/pxelinux.cfg/*; do
   esac
 done
 
-for IPXE_TARGET in ; do
+for IPXE_TARGET in ${IPXE_TARGETS}; do
   buildIpxe ${IPXE_TARGET} "$(readlink -f ${IPXE_EMBED_SCRIPT})"
 done
 
