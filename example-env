@@ -31,5 +31,5 @@ SERVER1_HOSTNAME=myhost.mydomain.lan
 SERVER1_IP=10.1.0.1
 
 # ipxe build vars
-IPXE_TARGET=bin-x86_64-efi/ipxe.efi
+IPXE_TARGETS="bin-x86_64-efi/ipxe.efi bin/undionly.kpxe"
 IPXE_EMBED_SCRIPT=web-server.ipxe

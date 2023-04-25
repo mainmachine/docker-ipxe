@@ -4,7 +4,7 @@
 
 export NAMESPACE=${NAMESPACE:-mynamespace}
 export IMAGENAME=${IMAGENAME:-myimagename}
-export IPXE_TARGET=${IPXE_TARGET:-bin-x86_64-efi/ipxe.efi}
+export IPXE_TARGETS=${IPXE_TARGETS:-bin-x86_64-efi/ipxe.efi}
 export IPXE_EMBED_SCRIPT=${IPXE_EMBED_SCRIPT:-web-server.ipxe}
 export datecode="v$(date +%y.%m.%d_%H.%M)"
 
@@ -64,7 +64,9 @@ for menufile in tftpboot/pxelinux.cfg/*; do
   esac
 done
 
-buildIpxe ${IPXE_TARGET} "$(readlink -f ${IPXE_EMBED_SCRIPT})"
+for IPXE_TARGET in ; do
+  buildIpxe ${IPXE_TARGET} "$(readlink -f ${IPXE_EMBED_SCRIPT})"
+done
 
 buildImage ${NAMESPACE} ${IMAGENAME} ${datecode}
 
