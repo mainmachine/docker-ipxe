@@ -1,0 +1,9 @@
+#!ipxe
+
+# If we have an IP already, show it, or else get one via dhcp
+isset netX/ip && show netX/ip || dhcp
+
+set web-server 10.1.0.3
+echo iPXE looking for boot script at ${web-server}
+chain --replace --autofree http://${web-server}/default.ipxe
+boot

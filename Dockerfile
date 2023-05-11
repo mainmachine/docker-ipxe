@@ -1,39 +1,36 @@
 FROM alpine:3.17.3
 
-LABEL maintainer "ferrari.marco@gmail.com"
+LABEL maintainer "dave.martinka@mediavuesystems.com"
 
 # Install the necessary packages
 RUN apk update \
     && apk add --no-cache \
        dnsmasq \
-       wget
+       wget \
+       xorriso
 
-ENV MEMTEST_VERSION 5.31b
-# ENV SYSLINUX_VERSION 6.03
-# ENV TEMP_SYSLINUX_PATH /tmp/syslinux-"$SYSLINUX_VERSION"
+ENV MEMTEST_VERSION 6.10
+ENV UEFI_SHELL_MAJOR_VERSION 2.2
+ENV UEFI_SHELL_RELEASE_VERSION 22H2
 
 WORKDIR /tmp
 
-RUN mkdir -p /var/lib/tftpboot/memtest /var/lib/tftpboot/bios /var/lib/tftpboot/uefi \
-    && ln -s ../pxelinux.cfg /var/lib/tftpboot/bios/ \
-    && ln -s ../pxelinux.cfg /var/lib/tftpboot/uefi/ \
-    && ln -s ../memtest /var/lib/tftpboot/uefi/ \
-    && ln -s ../memtest /var/lib/tftpboot/bios/
+RUN mkdir -p /var/lib/tftpboot/memtest
 
-RUN wget -q http://www.memtest.org/download/archives/"$MEMTEST_VERSION"/memtest86+-"$MEMTEST_VERSION".bin.gz \
-    && gunzip memtest86+-"$MEMTEST_VERSION".bin.gz \
-    && mv memtest86+-$MEMTEST_VERSION.bin /var/lib/tftpboot/memtest/memtest86+
+RUN wget -q http://www.memtest.org/download/v${MEMTEST_VERSION}/mt86plus_${MEMTEST_VERSION}.binaries.zip \
+    && unzip mt86plus_${MEMTEST_VERSION}.binaries.zip \
+    && mv memtest64.bin /var/lib/tftpboot/memtest/ \
+    && mv memtest64.efi /var/lib/tftpboot/memtest/ \
+    && rm mt86plus_* memtest*
 
-RUN apk update \
-    && apk add --no-cache \
-       syslinux \
-    && for target in pxelinux.0 lpxelinux.0 libcom32.c32 libutil.c32 ldlinux.c32 menu.c32 vesamenu.c32; do \
-         find /usr/share/syslinux/ -name "${target}" -exec cp {} /var/lib/tftpboot/bios \;; \
-       done \
-    && for target in syslinux.efi ldlinux.e64 libcom32.c32 libutil.c32 vesamenu.c32; do \
-         find /usr/share/syslinux/efi64 -name "${target}" -exec cp {} /var/lib/tftpboot/uefi \;; \
-       done \
-    && find /usr/share/syslinux -name pxechn.c32 -exec cp {} /var/lib/tftpboot/uefi \;;
+RUN mkdir -p /var/lib/tftpboot/uefishell
+
+RUN wget -q https://github.com/pbatard/UEFI-Shell/releases/download/${UEFI_SHELL_RELEASE_VERSION}/UEFI-Shell-${UEFI_SHELL_MAJOR_VERSION}-${UEFI_SHELL_RELEASE_VERSION}-RELEASE.iso \
+    && xorriso -osirrox on -indev UEFI-Shell-${UEFI_SHELL_MAJOR_VERSION}-${UEFI_SHELL_RELEASE_VERSION}-RELEASE.iso -extract / uefishell \
+    && mv uefishell/efi/boot/bootx64.efi /var/lib/tftpboot/uefishell/ \
+    && mv uefishell/efi/boot/bootaa64.efi /var/lib/tftpboot/uefishell/ \
+    && mv uefishell/efi/boot/bootarm.efi /var/lib/tftpboot/uefishell/ \
+    && rm -r uefishell* *.iso
 
 # Configure PXE and TFTP
 COPY tftpboot/ /var/lib/tftpboot

@@ -14,10 +14,26 @@ for menufile in tftpboot/pxelinux.cfg/*; do
       ;;
     *)
       menufilerename=${menufile%*.env}
-      docker cp tftpboot/pxelinux.cfg/${menufile} ${CONTAINERNAME}:/var/lib/tftpboot/pxelinux.cfg/${menufilerename}
-      docker exec ${CONTAINERNAME} sh -c "echo \"INCLUDE pxelinux.cfg/${menufilerename}\" >> /var/lib/tftpboot/pxelinux.cfg/additional_menu_entries"
+      docker cp tftpboot/pxelinux.cfg/${menufile} ${DNSMASQ_CONTAINER_NAME}:/var/lib/tftpboot/pxelinux.cfg/${menufilerename}
+      docker exec ${DNSMASQ_CONTAINER_NAME} sh -c "echo \"INCLUDE pxelinux.cfg/${menufilerename}\" >> /var/lib/tftpboot/pxelinux.cfg/additional_menu_entries"
       ;;
   esac
+done
+
+# ...also for ipxe and other files
+for tftpbootfile in tftpboot/*; do
+  if [ -f "$tftpbootfile" ]; then
+    tftpbootfile=$(basename $tftpbootfile)
+    case $tftpbootfile in
+      *example*)
+        true # Do nothing
+        ;;
+      *)
+        tftpbootfilerename=${tftpbootfile%*.env}
+        docker cp tftpboot/${tftpbootfile} ${DNSMASQ_CONTAINER_NAME}:/var/lib/tftpboot/${tftpbootfilerename}
+        ;;
+    esac
+  fi
 done
 
 # ...and the same goes for dnsmasq configs
@@ -27,7 +43,7 @@ for conffile in etc/dnsmasq.conf.d/*; do
       true # Do nothing
       ;;
     *.conf.env|*.conf)
-      docker cp ${conffile} ${CONTAINERNAME}:/${conffile%*.env}
+      docker cp ${conffile} ${DNSMASQ_CONTAINER_NAME}:/${conffile%*.env}
       ;;
     *)
       true # Do nothing
@@ -35,7 +51,34 @@ for conffile in etc/dnsmasq.conf.d/*; do
   esac
 done
 
-docker exec ${CONTAINERNAME} sh -c 'chown -R $(id -un):$(id -gn) /etc/dnsmasq.conf.d /var/lib/tftpboot'
+# ...and ALSO apache files
+for htdocsfile in usr/local/apache2/htdocs/*; do
+  htdocsfile=$(basename $htdocsfile)
+  case $htdocsfile in
+    *example*|README*)
+      true # Do nothing
+      ;;
+    *)
+      htdocsfilerename=${htdocsfile%*.env}
+      docker cp usr/local/apache2/htdocs/${htdocsfile} ${WEBSERVER_CONTAINER_NAME}:/usr/local/apache2/htdocs/${htdocsfilerename}
+      ;;
+  esac
+done
+
+# Sync memtest from dnsmaq container to httpd container
+otherpxedirs="memtest uefishell"
+for dir in $otherpxedirs; do
+  if (docker exec ${DNSMASQ_CONTAINER_NAME} sh -c "[ -d /var/lib/tftpboot/${dir} ]"); then
+    mkdir -p /tmp/staging/
+    docker cp ${DNSMASQ_CONTAINER_NAME}:/var/lib/tftpboot/${dir} /tmp/staging/
+    docker cp /tmp/staging/${dir} ${WEBSERVER_CONTAINER_NAME}:/usr/local/apache2/htdocs/
+  else
+    echo "Couldn't find $dir in ${DNSMASQ_CONTAINER_NAME}:/var/lib/tftpboot/ !!!"
+    exit 29
+  fi
+done
+
+docker exec ${DNSMASQ_CONTAINER_NAME} sh -c 'chown -R $(id -un):$(id -gn) /etc/dnsmasq.conf.d /var/lib/tftpboot'
 
 # Restart to use refreshed configs
 docker-compose restart

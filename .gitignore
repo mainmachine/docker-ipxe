@@ -5,3 +5,4 @@
 *.env
 **/*.env
 **/*.bak
+web-server.ipxe

@@ -3,7 +3,7 @@
 version: '2'
 services:
   dnsmasq-dhcp-pxe:
-    container_name: ${CONTAINERNAME}
+    container_name: ${DNSMASQ_CONTAINER_NAME}
     hostname: ${CONTAINER_HOSTNAME}
     restart: unless-stopped
     image: ${NAMESPACE}/${IMAGENAME}
@@ -21,6 +21,18 @@ services:
       --dhcp-authoritative
       --conf-dir=/etc/dnsmasq.conf.d,*.conf
 
+  web-server:
+    container_name: ${WEBSERVER_CONTAINER_NAME}
+    restart: unless-stopped
+    image: httpd
+    volumes:
+      - "webroot:/usr/local/apache2/htdocs"
+      - "/srv/isos:/usr/local/apache2/htdocs/isos"
+    networks:
+      iso-br1:
+        ipv4_address: ${WEBSERVER_IP}
+
+
 networks:
   iso-br1:
     driver: macvlan
@@ -34,3 +46,4 @@ networks:
 volumes:
   pxelinux-cfg:
   dnsmasq-conf:
+  webroot:

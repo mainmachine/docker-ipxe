@@ -103,3 +103,27 @@ you may have configured, if you serve any content from the TFTP server (like a
 `preseed.cfg` for example) to point to the IP address of the container running
 this PXE. For this reason, it could be useful to manually assign (or reserve)
 IP addresses (or better, hostnames!) for containers running this PXE.
+
+## Git Submodules
+
+This repo includes ipxe as a submodule: https://github.com/ipxe/ipxe.git
+
+After cloning, you will need to initialize and populate this submodule with the following commands:
+
+```shell
+git submodule init
+git submodule update
+```
+
+### Support for arm64 (WIP)
+
+Note: To cross-compile ipxe for arm64, do the following:
+
+```shell
+# Install cross-compiling tools
+sudo apt install gcc make gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu
+
+# Build ipxe efi executable (example)
+cd ipxe/src
+make -j$(nproc --ignore=1) CROSS=aarch64-linux-gnu- bin-arm64-efi/ipxe.efi
+```
