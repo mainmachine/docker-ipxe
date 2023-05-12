@@ -1,16 +1,48 @@
-# Dockerized PXE
+# Dockerized iPXE
 
-A Docker image serving as a standalone [PXE](https://en.wikipedia.org/wiki/Preboot_Execution_Environment) (running dnsmasq). This server can be placed in an existing network infrastructure with an already configured DHCP server or in a network without any DHCP server.
+A Docker service serving as a standalone [PXE](https://en.wikipedia.org/wiki/Preboot_Execution_Environment) (running dnsmasq). This server can be placed in an existing network infrastructure with an already configured DHCP server or in a network without any DHCP server. [iPXE](https://ipxe.org/) is used as it is a modern and flexible PXE system. PXE systems traditionally use tftp for compatibility, however http is MUCH faster so here tftp is only used to bootstrap iPXE.
+
+A preferred approach is to use multi-NIC server, running this stack and acting as a gateway. One NIC is connected to the existing LAN while the other is dedicated to the DHCP/PXE service.
 
 This PXE currently serves:
 
 - [MemTest86+](http://www.memtest86.com/)
+- [UEFI Shell](https://wiki.archlinux.org/title/Unified_Extensible_Firmware_Interface#UEFI_Shell)
+
+## Cloning
+
+```shell
+git clone --recurse-submodules && cd docker-ipxe
+```
+
+This repo includes [iPXE](https://github.com/ipxe/ipxe.git) as a submodule. If you didn't include the `--recurse-submodules` option, you will need to initialize and populate this submodule with the following commands:
+
+```shell
+git submodule init
+git submodule update
+```
 
 ## Dependencies
 
 These are the dependencies required to build and run the container image:
 
 - Docker 1.12+
+
+## Configuration
+
+Configuration is done through `*.env` files. While it would be simpler to include configuration "in line" in our `docker-compose.yml`, `dnsmasq.conf` and other primary config files, separating our configuration from the application allows us to protect sensitive information like IP ranges, domains, passwords, etc.
+
+- `.env`
+
+This file is used by both `docker build` and by `docker-compose` which simplifies configuration. See `example-env` for more detail.
+
+## Build
+
+Simply run:
+
+```shell
+./build.sh
+```
 
 ## How to run
 
@@ -104,16 +136,11 @@ you may have configured, if you serve any content from the TFTP server (like a
 this PXE. For this reason, it could be useful to manually assign (or reserve)
 IP addresses (or better, hostnames!) for containers running this PXE.
 
-## Git Submodules
 
-This repo includes ipxe as a submodule: https://github.com/ipxe/ipxe.git
 
-After cloning, you will need to initialize and populate this submodule with the following commands:
 
-```shell
-git submodule init
-git submodule update
-```
+
+
 
 ### Support for arm64 (WIP)
 
