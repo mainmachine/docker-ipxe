@@ -9,11 +9,10 @@ services:
     image: ${NAMESPACE}/${IMAGENAME}
     cap_add:
       - NET_ADMIN
-    # environment:
     volumes:
       - "pxelinux-cfg:/var/lib/tftpboot/pxelinux.cfg"
       - "dnsmasq-conf:/etc/dnsmasq.conf.d"
-      - "${EXTRA_PATH}:/var/lib/tftpboot/${EXTRA_NAME}"
+      # - "${EXTRA_PATH}:/var/lib/tftpboot/${EXTRA_NAME}" # Optional, bind-mount to pre-existing assets
     networks:
       iso-br1:
         ipv4_address: ${HUB_IP}
