@@ -1,0 +1,6 @@
+#!ipxe
+
+set web-server 10.1.0.3
+
+# Clear menu-default
+set menu-default
