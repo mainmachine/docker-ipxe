@@ -36,6 +36,22 @@ Configuration is done through `*.env` files. While it would be simpler to includ
 
 This file is used by both `docker build` and by `docker-compose` which simplifies configuration. See `example-env` for more detail.
 
+DNSmasq configuration and PxE target assets can be included with `.env` appended to keep them separate from this git repository. For additional information, see the `README.md` files, example configs and safe defaults located here:
+
+```shell
+etc/dnsmasq.conf.d/
+usr/local/apache2/htdocs/
+tftpboot/
+```
+
+### iPXE Embedded Script
+
+iPXE binaries can be compiled with an embedded iPXE script, which can be incredibly powerful. We could put all of our iPXE menu options directly in to such a script, which could be great for a scenario where the iPXE server and boot targets are different, or where there are multiple different servers hosting bootable assets included in the script.
+
+For simplicity though, a simpler approach is to use a simpler embedded script, and keep the more complex iPXE menus and assets on a single, local web-server. This prevents having to rebuild `iPXE` target(s) for every menu change.
+
+The `IPXE_EMBED_SCRIPT` in the `.env` should be a path to a script which will be compiled in to the `iPXE` target(s) when you run `build.sh`.
+
 ## Build
 
 Simply run:
@@ -43,6 +59,8 @@ Simply run:
 ```shell
 ./build.sh
 ```
+
+This will build the iPXE target(s) you specified in the `.env` file, then build the docker image for the dnsmasq service. The `buildImage` function handles re-tagging and image cleanup to reduce the need for image management - nice if you rebuild frequently.
 
 ## How to run
 
